@@ -1,4 +1,17 @@
-fastapi
-uvicorn
-requests
-python-dotenv
+fastapi==0.104.1
+uvicorn[standard]==0.24.0
+requests==2.31.0
+python-dotenv==1.0.0
+pydantic==2.5.0
+pydantic-settings==2.1.0
+
+# Speech recognition
+openai-whisper==20231117
+sounddevice==0.4.6
+soundfile==0.12.1
+
+# Optional: Spotify integration
+spotipy==2.23.0
+
+# Optional: Additional tools
+wikipedia==1.4.0
