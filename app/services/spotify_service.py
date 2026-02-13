@@ -41,3 +41,66 @@ def exchange_code_for_token(code: str):
     )
 
     return response.json()
+
+class SpotifyService:
+
+    def __init__(self):
+        self.access_token = None  # later replace with storage
+
+    def _headers(self):
+        return {
+            "Authorization": f"Bearer {self.access_token}"
+        }
+
+    def play_song(self, song: str):
+        track = self._search_song(song)
+        if not track:
+            return {"error": "Song not found"}
+
+        requests.put(
+            "https://api.spotify.com/v1/me/player/play",
+            headers=self._headers(),
+            json={"uris": [track["uri"]]}
+        )
+
+        return {
+            "status": "playing",
+            "track": track["name"],
+            "artist": track["artist"]
+        }
+
+    def _search_song(self, query: str):
+        response = requests.get(
+            "https://api.spotify.com/v1/search",
+            headers=self._headers(),
+            params={
+                "q": query,
+                "type": "track",
+                "limit": 1
+            }
+        )
+
+        items = response.json()["tracks"]["items"]
+        if not items:
+            return None
+
+        track = items[0]
+
+        return {
+            "name": track["name"],
+            "artist": track["artists"][0]["name"],
+            "uri": track["uri"]
+        }
+
+    def pause(self):
+        requests.put(
+            "https://api.spotify.com/v1/me/player/pause",
+            headers=self._headers()
+        )
+        return {"status": "paused"}
+
+    def execute_tool(name: str, args: dict):
+        if name not in AVAILABLE_TOOLS:
+            return {"error": "Tool not allowed"}
+
+        return AVAILABLE_TOOLS[name](**args)
