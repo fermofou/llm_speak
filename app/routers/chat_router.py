@@ -1,8 +1,12 @@
 from fastapi import APIRouter
-from app.services.ollama_service import chat_with_model
+from pydantic import BaseModel
+from app.services.chat_service import process_message
 
 router = APIRouter()
 
+class ChatRequest(BaseModel):
+    message: str
+
 @router.post("/chat")
-def chat(message: str):
-    return chat_with_model(message)
+def chat(req: ChatRequest):
+    return process_message(req.message)
